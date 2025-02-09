@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %> <%@taglib prefix="c"
-uri="http://java.sun.com/jsp/jstl/core" %>
+uri="http://java.sun.com/jsp/jstl/core" %> <%@taglib prefix="form"
+uri="http://www.springframework.org/tags/form" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,9 +21,13 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     <link href="/css/demo.css" rel="stylesheet" />
   </head>
   <body>
-    Hello from jsp
-    <h1>${text}</h1>
-    <p>${subText}</p>
-    <button class="stylesheet">Submit</button>
+    <div class="container mx-auto text-center pt-5">
+      <h1>Hello from jsp</h1>
+      <p>Email: ${User.email}</p>
+      <p>Name: ${User.name}</p>
+      <form:form action="/admin/user">
+        <button class="btn btn-success">Return to Homepage</button>
+      </form:form>
+    </div>
   </body>
 </html>
