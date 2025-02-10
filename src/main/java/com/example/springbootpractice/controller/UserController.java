@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.example.springbootpractice.domain.User;
+import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.repository.UserRepository;
 import com.example.springbootpractice.service.UserService;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,12 +34,12 @@ public class UserController {
 
 
     @RequestMapping("/")
-    public String userPage(Model model,@ModelAttribute("User") User user) {
+    public String userPage(Model model,@ModelAttribute("User") Users user) {
         String text = this.userService.handleUserPage();
         model.addAttribute("text", text);
         model.addAttribute("subText", "text no1");
-        List<User> test = this.userService.handleGetAllUser();
-        List<User> test1 = this.userService.handleGetAllUserByEmailAndPhone(test.get(0).getEmail(), test.get(0).getPhone());
+        List<Users> test = this.userService.handleGetAllUser();
+        List<Users> test1 = this.userService.handleGetAllUserByEmailAndPhone(test.get(0).getEmail(), test.get(0).getPhone());
         System.out.println(test);
         System.out.println("\n test1 " + test1);
         return "hello";
@@ -47,7 +47,7 @@ public class UserController {
 
     @RequestMapping("/admin/user")
     public String adminUserPage(Model model) {
-        List<User> users = this.userService.handleGetAllUser();
+        List<Users> users = this.userService.handleGetAllUser();
         System.out.println(users);
         model.addAttribute("User", users);
         return "/admin/user/usersList";
@@ -55,22 +55,22 @@ public class UserController {
 
     @RequestMapping("/admin/user/create")
     public String adminCreateUserPage(Model model) {
-        model.addAttribute("User", new User());
+        model.addAttribute("User", new Users());
         return "/admin/user/createUser";
     }
 
     @RequestMapping(value = "/admin/user/create-result", method = RequestMethod.POST)
-    public String createUserResultPage(Model model, @ModelAttribute("User") User user) {
+    public String createUserResultPage(Model model, @ModelAttribute("User") Users user) {
         System.out.println("create user page runned " + user);
         userService.handleSaveCreatedUser(user);
-        List<User> test = new ArrayList<User>();
+        List<Users> test = new ArrayList<Users>();
         test = userService.handleGetAllUser();
         System.out.println(test);
         return "/admin/user/createUserResult";
     }
 
     @RequestMapping("/admin/user/edit/{id}")
-    public String adminEditUserPage(Model model,@PathVariable long id,@ModelAttribute("User") User editUser) {
+    public String adminEditUserPage(Model model,@PathVariable long id,@ModelAttribute("User") Users editUser) {
        editUser = this.userService.findById(id).get();
        System.out.println(editUser);
       model.addAttribute("editUser", editUser);
@@ -78,8 +78,8 @@ public class UserController {
     }
 
     @RequestMapping(value="/admin/user/edit/{id}", method=RequestMethod.POST)
-    public String adminEditUserResultPage(Model model,@PathVariable long id,@ModelAttribute("User") User editUser) {
-       User updatedUser = this.userService.findById(editUser.getId()).get();
+    public String adminEditUserResultPage(Model model,@PathVariable long id,@ModelAttribute("User") Users editUser) {
+       Users updatedUser = this.userService.findById(editUser.getId()).get();
        if(updatedUser != null){
         updatedUser.setName(editUser.getName());
         updatedUser.setPhone(editUser.getPhone());

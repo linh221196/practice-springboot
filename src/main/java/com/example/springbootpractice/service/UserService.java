@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.springbootpractice.domain.User;
+import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.repository.UserRepository;
 
 @Service
@@ -21,16 +21,16 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User handleSaveCreatedUser(User user){
+    public Users handleSaveCreatedUser(Users user){
         return this.userRepository.save(user);
     }
-    public List<User> handleGetAllUser(){
+    public List<Users> handleGetAllUser(){
         return this.userRepository.findAll();
     }
-    public List<User> handleGetAllUserByEmailAndPhone(String email, String phone){
+    public List<Users> handleGetAllUserByEmailAndPhone(String email, String phone){
         return this.userRepository.findByEmailAndPhone(email,phone);
     }
-    public Optional<User> findById(long id){
+    public Optional<Users> findById(long id){
         return this.userRepository.findById(id);
     }
     public void handleDeleteUserById(long id){

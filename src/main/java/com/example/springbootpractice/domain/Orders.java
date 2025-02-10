@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Order {
+public class Orders {
    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
