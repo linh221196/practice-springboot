@@ -46,8 +46,12 @@ uri="http://www.springframework.org/tags/form" %>
                 <td>${user.email}</td>
                 <td>${user.phone}</td>
                 <td>
-                  <a class="btn btn-warning" href="/admin/user/edit/${user.id}">Edit</a>
-                  <a class="btn btn-danger">Delete</a>
+                  <a class="btn btn-warning" href="/admin/user/edit/${user.id}"
+                    >Edit</a
+                  >
+                  <form action="/admin/user/delete/${user.id}" method="post">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                  </form>
                 </td>
               </tr>
             </c:forEach>

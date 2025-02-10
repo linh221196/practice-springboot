@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.example.springbootpractice.domain.User;
 import com.example.springbootpractice.repository.UserRepository;
 import com.example.springbootpractice.service.UserService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class UserController {
@@ -74,4 +76,24 @@ public class UserController {
       model.addAttribute("editUser", editUser);
         return "/admin/user/editUser";
     }
+
+    @RequestMapping(value="/admin/user/edit/{id}", method=RequestMethod.POST)
+    public String adminEditUserResultPage(Model model,@PathVariable long id,@ModelAttribute("User") User editUser) {
+       User updatedUser = this.userService.findById(editUser.getId()).get();
+       if(updatedUser != null){
+        updatedUser.setName(editUser.getName());
+        updatedUser.setPhone(editUser.getPhone());
+       }
+       this.userService.handleSaveCreatedUser(updatedUser);
+       System.out.println("adminEditUserResultPage" + editUser);
+      model.addAttribute("editUser", editUser);
+        return "redirect:/admin/user";
+    }
+
+    @RequestMapping(value="/admin/user/delete/{id}", method=RequestMethod.POST)
+    public String handleDeleteUserById(@PathVariable long id) {
+         this.userService.handleDeleteUserById(id);
+         return "redirect:/admin/user";
+    }
+    
 }

@@ -33,6 +33,49 @@ uri="http://www.springframework.org/tags/form" %>
         </ul>
       </div>
 
+      <form:form
+        method="post"
+        action="/admin/user/edit/${editUser.id}"
+        modelAttribute="User">
+        <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <form:input
+            type="email"
+            class="form-control"
+            path="email"
+            value="${editUser.email}"
+            disabled="true" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password:</label>
+          <form:input
+            type="password"
+            class="form-control"
+            path="password"
+            value="${editUser.password}"
+            disabled="true" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Name:</label>
+          <form:input
+            type="text"
+            class="form-control"
+            path="name"
+            value="${editUser.name}" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Phone:</label>
+          <form:input
+            type="text"
+            class="form-control"
+            path="phone"
+            value="${editUser.phone}" />
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+      </form:form>
+
       <form:form action="/admin/user">
         <button class="btn btn-success">Return to Homepage</button>
       </form:form>
