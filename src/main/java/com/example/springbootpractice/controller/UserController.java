@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +25,12 @@ import com.example.springbootpractice.service.error.IdInvalidException;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder){
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
       
     }
 
@@ -39,6 +42,9 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<Users> createUser(@RequestBody Users user){
+        String hashPW= user.getPassword();
+        String hashed =  this.passwordEncoder.encode(hashPW);
+        user.setPassword(hashed);
         this.userService.handleCreatedUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
         
