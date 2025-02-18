@@ -1,27 +1,26 @@
 package com.example.springbootpractice.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.springbootpractice.domain.Users;
-import com.example.springbootpractice.repository.UserRepository;
 import com.example.springbootpractice.service.UserService;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.example.springbootpractice.service.error.IdInvalidException;
 
 
-@Controller
+
+@RestController
 public class UserController {
 
     private final UserService userService;
@@ -33,67 +32,45 @@ public class UserController {
     }
 
 
-    @RequestMapping("/")
-    public String userPage(Model model,@ModelAttribute("User") Users user) {
-        String text = this.userService.handleUserPage();
-        model.addAttribute("text", text);
-        model.addAttribute("subText", "text no1");
-        List<Users> test = this.userService.handleGetAllUser();
-        List<Users> test1 = this.userService.handleGetAllUserByEmailAndPhone(test.get(0).getEmail(), test.get(0).getPhone());
-        System.out.println(test);
-        System.out.println("\n test1 " + test1);
-        return "hello";
+    @GetMapping("/")
+    public String userPage(){
+        return "Hello from Rest API";
     }
 
-    @RequestMapping("/admin/user")
-    public String adminUserPage(Model model) {
-        List<Users> users = this.userService.handleGetAllUser();
-        System.out.println(users);
-        model.addAttribute("User", users);
-        return "/admin/user/usersList";
+    @PostMapping("/users")
+    public ResponseEntity<Users> createUser(@RequestBody Users user){
+        this.userService.handleCreatedUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        
     }
 
-    @RequestMapping("/admin/user/create")
-    public String adminCreateUserPage(Model model) {
-        model.addAttribute("User", new Users());
-        return "/admin/user/createUser";
-    }
-
-    @RequestMapping(value = "/admin/user/create-result", method = RequestMethod.POST)
-    public String createUserResultPage(Model model, @ModelAttribute("User") Users user) {
-        System.out.println("create user page runned " + user);
-        userService.handleSaveCreatedUser(user);
-        List<Users> test = new ArrayList<Users>();
-        test = userService.handleGetAllUser();
-        System.out.println(test);
-        return "/admin/user/createUserResult";
-    }
-
-    @RequestMapping("/admin/user/edit/{id}")
-    public String adminEditUserPage(Model model,@PathVariable long id,@ModelAttribute("User") Users editUser) {
-       editUser = this.userService.findById(id).get();
-       System.out.println(editUser);
-      model.addAttribute("editUser", editUser);
-        return "/admin/user/editUser";
-    }
-
-    @RequestMapping(value="/admin/user/edit/{id}", method=RequestMethod.POST)
-    public String adminEditUserResultPage(Model model,@PathVariable long id,@ModelAttribute("User") Users editUser) {
-       Users updatedUser = this.userService.findById(editUser.getId()).get();
-       if(updatedUser != null){
-        updatedUser.setName(editUser.getName());
-        updatedUser.setPhone(editUser.getPhone());
-       }
-       this.userService.handleSaveCreatedUser(updatedUser);
-       System.out.println("adminEditUserResultPage" + editUser);
-      model.addAttribute("editUser", editUser);
-        return "redirect:/admin/user";
-    }
-
-    @RequestMapping(value="/admin/user/delete/{id}", method=RequestMethod.POST)
-    public String handleDeleteUserById(@PathVariable long id) {
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable long id){
          this.userService.handleDeleteUserById(id);
-         return "redirect:/admin/user";
+         return ResponseEntity.status(HttpStatus.OK).body("Delete Succeded");
     }
+
     
+    @GetMapping("/users/{id}")
+    public Users fetchUser(@PathVariable long id) throws IdInvalidException{
+        boolean isEmptyOptional=this.userService.findById(id).isPresent();
+        if(!isEmptyOptional){
+            throw new IdInvalidException("ID INVALID EXCEPTION");
+        }
+        return this.userService.findById(id).get();
+
+    }
+
+    @GetMapping("/users/all")
+    public List<Users> fetchAllUsers(){
+        return this.userService.handleGetAllUser();
+    }
+
+    @PutMapping("/users/edit")
+    public Users creatUsers(@RequestBody Users user){
+        Users tempUser = this.userService.findById(user.getId()).get();
+        tempUser.setName(user.getName());
+        tempUser.setEmail(user.getEmail());
+        return this.userService.handleCreatedUser(tempUser);     
+    }
 }

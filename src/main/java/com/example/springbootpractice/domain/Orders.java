@@ -1,9 +1,13 @@
 package com.example.springbootpractice.domain;
 
+import org.hibernate.annotations.JoinColumnOrFormula;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Orders {
@@ -13,6 +17,10 @@ public class Orders {
     private long id;
     
     private double totalPrice;
+
+    @ManyToOne
+    @JoinColumn
+    private Users users;
 
     public long getId() {
         return id;

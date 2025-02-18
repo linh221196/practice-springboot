@@ -1,6 +1,5 @@
 package com.example.springbootpractice.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Users handleSaveCreatedUser(Users user){
+    public Users handleCreatedUser(Users user){
         return this.userRepository.save(user);
     }
     public List<Users> handleGetAllUser(){

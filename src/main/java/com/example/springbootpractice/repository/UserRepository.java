@@ -1,7 +1,6 @@
 package com.example.springbootpractice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 //import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +13,5 @@ public interface UserRepository extends JpaRepository<Users,Long> {
     Users save(Users user);
     List<Users> findByEmailAndPhone(String email, String phone);
     void deleteById(long id);
-    
-    // @Query("update u from User where u.id=:id")
-    // User updateById(User user,long id);
     
 }
