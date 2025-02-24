@@ -74,15 +74,11 @@ public class UserController {
 
     }
 
+    // http://localhost:8080/admin/users/all?page=1&size=3&filter=name~'a'and email~'h'&sort=id,asc
     @GetMapping("/all")
     public ResponseEntity<PaginationDTO> fetchAllUsers(
-        @Filter Specification<Users> specification,
-       Pageable pageable
-    ){
-        
-        Pageable pageableTemp = PageRequest.of(pageable.getPageNumber() -1, pageable.getPageSize());
-
-        return ResponseEntity.ok().body(this.userService.handleGetAllUser(specification,pageableTemp));
+        @Filter Specification<Users> specification,Pageable pageable){
+        return ResponseEntity.ok().body(this.userService.handleGetAllUser(specification,pageable));
     }
 
     @PutMapping("/edit")
