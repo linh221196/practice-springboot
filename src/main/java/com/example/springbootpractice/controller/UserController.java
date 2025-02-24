@@ -76,15 +76,13 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<PaginationDTO> fetchAllUsers(
-        @Filter Specification<Users> specification 
-        // ,@RequestParam Optional<String> current,
-        // @RequestParam Optional<String> pageSize
+        @Filter Specification<Users> specification,
+       Pageable pageable
     ){
-        // String sCurrent = current.isPresent() ? current.get() : "";
-        // String sPageSize = pageSize.isPresent() ? pageSize.get(): "";
-        // Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) -1, Integer.parseInt(sPageSize));
+        
+        Pageable pageableTemp = PageRequest.of(pageable.getPageNumber() -1, pageable.getPageSize());
 
-        return ResponseEntity.ok().body(this.userService.handleGetAllUser(specification));
+        return ResponseEntity.ok().body(this.userService.handleGetAllUser(specification,pageableTemp));
     }
 
     @PutMapping("/edit")

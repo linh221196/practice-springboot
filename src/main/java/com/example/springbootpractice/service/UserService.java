@@ -29,23 +29,22 @@ public class UserService {
         return this.userRepository.save(user);
     }
     public PaginationDTO handleGetAllUser(
-        Specification<Users> specification
-    //    ,Pageable pageable
+        Specification<Users> specification ,Pageable pageable
         ){
-        List<Users> users = this.userRepository.findAll(
+        
+        Page<Users> users = this.userRepository.findAll(
           specification  
-        //  ,pageable
+        ,pageable
             );
         PaginationDTO paginationDTO = new PaginationDTO();
         MetaDTO metaDTO = new MetaDTO();
-        // metaDTO.setPage(users.getNumber()+1);
-        // metaDTO.setPageSize(users.getSize());
-        // metaDTO.setPages(users.getTotalPages());
-        // metaDTO.setTotal(users.getTotalElements());
+        metaDTO.setPage(users.getNumber());
+        metaDTO.setPageSize(users.getSize());
+        metaDTO.setPages(users.getTotalPages());
+        metaDTO.setTotal(users.getTotalElements());
 
         paginationDTO.setMetaDTO(metaDTO);
-        // paginationDTO.setResult(users.getContent());
-        paginationDTO.setResult(users);
+        paginationDTO.setResult(users.getContent());
 
         return paginationDTO ;
     }
