@@ -42,7 +42,8 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(auth);
         usersDto.setUsers(users);
         usersDto.setAccessToken(accessToken);
-        
+
+        String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), usersDto.getUsers());        
         return ResponseEntity.ok().body(usersDto);
     }
     
