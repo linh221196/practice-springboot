@@ -1,7 +1,11 @@
 package com.example.springbootpractice.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,9 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.springbootpractice.domain.Users;
+import com.example.springbootpractice.domain.dto.PaginationDTO;
 import com.example.springbootpractice.service.UserService;
 
 
@@ -69,8 +75,14 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public List<Users> fetchAllUsers(){
-        return this.userService.handleGetAllUser();
+    public ResponseEntity<PaginationDTO> fetchAllUsers(
+        @RequestParam Optional<String> current,
+        @RequestParam Optional<String> pageSize
+    ){
+        String sCurrent = current.isPresent() ? current.get() : "";
+        String sPageSize = pageSize.isPresent() ? pageSize.get(): "";
+        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) -1, Integer.parseInt(sPageSize));
+        return ResponseEntity.ok().body(this.userService.handleGetAllUser(pageable));
     }
 
     @PutMapping("/edit")

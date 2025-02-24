@@ -2,6 +2,8 @@ package com.example.springbootpractice.domain;
 
 import java.util.List;
 
+import com.example.springbootpractice.domain.entity.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +17,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Orders {
+public class Orders extends BaseEntity {
    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,22 +31,6 @@ public class Orders {
 
     @OneToMany(mappedBy = "orders")
     private List<Products> products;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
 
     @Override
     public String toString() {
