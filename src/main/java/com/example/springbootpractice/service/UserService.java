@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.MetaDTO;
@@ -26,8 +27,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Users handleCreatedUser(Users user){
-        return this.userRepository.save(user);
+        try {
+            return this.userRepository.save(user);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("EMAIL IS ALREADY IN USE");
+        }
+       
     }
     public PaginationDTO handleGetAllUser(
         Specification<Users> specification ,Pageable pageable
