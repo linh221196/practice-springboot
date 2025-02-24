@@ -19,12 +19,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Getter
 @Setter
 public class Companies {
-// private final SecurityJwt securityJwt;
-
-
-//     public Companies(SecurityJwt securityJwt) {
-//     this.securityJwt = securityJwt;
-// }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +48,12 @@ public class Companies {
     public void handleBeforeCreate(){
         String creator = SecurityJwt.getCurrentUserLogin().orElse("");
         setCreatedBy(creator);
+    }
+
+    @PreUpdate
+    public void handleBeforeUpdate(){
+        String updatePerson = SecurityJwt.getCurrentUserLogin().orElse("");
+        setUpdatedBy(updatePerson);
     }
 
 }
