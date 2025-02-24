@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.springbootpractice.domain.Users;
@@ -27,17 +28,24 @@ public class UserService {
     public Users handleCreatedUser(Users user){
         return this.userRepository.save(user);
     }
-    public PaginationDTO handleGetAllUser(Pageable pageable){
-        Page<Users> users = this.userRepository.findAll(pageable);
+    public PaginationDTO handleGetAllUser(
+        Specification<Users> specification
+    //    ,Pageable pageable
+        ){
+        List<Users> users = this.userRepository.findAll(
+          specification  
+        //  ,pageable
+            );
         PaginationDTO paginationDTO = new PaginationDTO();
         MetaDTO metaDTO = new MetaDTO();
-        metaDTO.setPage(users.getNumber()+1);
-        metaDTO.setPageSize(users.getSize());
-        metaDTO.setPages(users.getTotalPages());
-        metaDTO.setTotal(users.getTotalElements());
+        // metaDTO.setPage(users.getNumber()+1);
+        // metaDTO.setPageSize(users.getSize());
+        // metaDTO.setPages(users.getTotalPages());
+        // metaDTO.setTotal(users.getTotalElements());
 
         paginationDTO.setMetaDTO(metaDTO);
-        paginationDTO.setResult(users.getContent());
+        // paginationDTO.setResult(users.getContent());
+        paginationDTO.setResult(users);
 
         return paginationDTO ;
     }
