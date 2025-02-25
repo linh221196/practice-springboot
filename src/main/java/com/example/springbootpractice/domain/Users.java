@@ -46,6 +46,8 @@ public class Users extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
     private String address;
 

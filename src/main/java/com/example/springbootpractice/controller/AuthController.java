@@ -1,5 +1,9 @@
 package com.example.springbootpractice.controller;
 
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,6 +27,9 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserService userService;
     private final SecurityJwt securityJwt;
+
+    @Value("${valid.refresh.jwt}")
+    private long validRefreshTime;
     
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService, SecurityJwt securityJwt) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
@@ -43,8 +50,21 @@ public class AuthController {
         usersDto.setUsers(users);
         usersDto.setAccessToken(accessToken);
 
-        String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), usersDto.getUsers());        
-        return ResponseEntity.ok().body(usersDto);
+        String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), usersDto.getUsers());      
+        
+        this.userService.updateUserRefreshToken(refreshToken, loginDto.getUsername());
+        
+        //set cookies
+        ResponseCookie responseCookie = ResponseCookie
+        .from("refreshToken", refreshToken)
+        .httpOnly(true)
+        .path("/")
+        .maxAge(validRefreshTime)
+        .secure(true)
+        .build();
+        return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
+        .body(usersDto);
     }
     
 }
