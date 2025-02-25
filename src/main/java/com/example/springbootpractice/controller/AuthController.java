@@ -47,9 +47,9 @@ public class AuthController {
         Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
         Users users = this.userService.findByEmail(loginDto.getUsername());
         
-        this.securityJwt.createToken(auth);
+        this.securityJwt.createToken(loginDto.getUsername());
         UsersDto usersDto = new UsersDto();
-        String accessToken = this.securityJwt.createToken(auth);
+        String accessToken = this.securityJwt.createToken(auth.getName());
         SecurityContextHolder.getContext().setAuthentication(auth);
         usersDto.setUsers(users);
         usersDto.setAccessToken(accessToken);
@@ -84,13 +84,53 @@ public class AuthController {
 
     @GetMapping("/auth/refresh")
     @ApiMessage("get user by refresh token")
-    public ResponseEntity<Users> getNewRefreshToken(
+    public ResponseEntity<UsersDto> getNewRefreshToken(
         @CookieValue(name = "refreshToken") String refreshToken
     ){
         Jwt jwt=this.securityJwt.checkValidRefreshToken(refreshToken);
         String email = jwt.getSubject();
-        Users users = this.userService.findByEmail(email);
-        return ResponseEntity.ok().body(users);
+      
+        Users users = this.userService.findByRefreshTokenAndEmail(refreshToken, email);
+        
+        UsersDto usersDto = new UsersDto();
+        usersDto.setUsers(users);
+        String accessToken = this.securityJwt.createToken(email);
+        usersDto.setAccessToken(accessToken);
+        String newRefreshToken = this.securityJwt.createRefreshToken(email, users);      
+        this.userService.updateUserRefreshToken(newRefreshToken, email);
+        
+        ResponseCookie responseCookie = ResponseCookie
+        .from("refreshToken", newRefreshToken)
+        .httpOnly(true)
+        .path("/")
+        .maxAge(validRefreshTime)
+        .secure(true)
+        .build();
+        return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
+        .body(usersDto);
+    }
+
+    @GetMapping("/auth/logout")
+    public ResponseEntity<Void> logout(
+        @CookieValue(name = "refreshToken") String refreshToken
+    ){
+        Jwt jwt = this.securityJwt.checkValidRefreshToken(refreshToken);
+        String email = jwt.getSubject();
+        Users users = this.userService.findByRefreshTokenAndEmail(refreshToken, email);
+        this.userService.revokeRefreshToken(users.getId());;
+        
+        ResponseCookie responseCookie = ResponseCookie
+        .from("refreshToken",null)
+        .httpOnly(true)
+        .path("/")
+        .maxAge(0)
+        .secure(true)
+        .build();
+
+        return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
+        .body(null);
     }
 }
  

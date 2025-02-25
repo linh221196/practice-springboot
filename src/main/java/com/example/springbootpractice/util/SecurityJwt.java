@@ -55,7 +55,7 @@ public class SecurityJwt {
         return new SecretKeySpec(keyBytes,0,keyBytes.length,JWT_ALGORITHM.getName());
     }
 
-    public String createToken(Authentication auth){
+    public String createToken(String email){
         Instant now = Instant.now();
         Instant validity = now.plus(validTime, ChronoUnit.SECONDS);
 
@@ -66,8 +66,8 @@ public class SecurityJwt {
         JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuedAt(now)
         .expiresAt(validity)
-        .subject(auth.getName())
-        .claim("users", auth)
+        .subject(email)
+        .claim("users", email)
         .claim("permission", listAuthority)
         .build(); 
 

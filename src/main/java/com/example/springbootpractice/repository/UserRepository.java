@@ -15,6 +15,7 @@ JpaSpecificationExecutor<Users> {
     List<Users> findByEmailAndPhone(String email, String phone);
     void deleteById(long id);
     Users findByEmail(String email);
+    Users findByRefreshTokenAndEmail(String refreshToken, String email);
     
     
 }
