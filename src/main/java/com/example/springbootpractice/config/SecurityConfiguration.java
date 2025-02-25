@@ -48,7 +48,7 @@ public class SecurityConfiguration {
     .cors(Customizer.withDefaults()) 
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/","/login").permitAll()  // Allow access to login page
+        .requestMatchers("/","/login","/auth/refresh").permitAll()  // Allow access to login page
         .anyRequest().authenticated()
     )  
     .formLogin(f -> f.disable())
@@ -62,7 +62,7 @@ public class SecurityConfiguration {
     public JwtAuthenticationConverter jwtAuthenticationConverter(){
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("jwtKey");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("permission");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);

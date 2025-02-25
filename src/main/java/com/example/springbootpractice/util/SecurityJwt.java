@@ -2,9 +2,14 @@ package com.example.springbootpractice.util;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -17,10 +22,12 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 
 import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.UsersDto;
+import com.nimbusds.jose.util.Base64;
 
 
 @Service
@@ -34,21 +41,34 @@ public class SecurityJwt {
         this.jwtEncoder = jwtEncoder;
     }
 
+    @Value("${key.jwt}")
+    private String jwtKey;
+
     @Value("${valid.access.jwt}")
     private long validTime;
 
     @Value("${valid.refresh.jwt}")
     private long validRefreshTime;
 
+    private SecretKey getSecretKey(){
+        byte[] keyBytes = Base64.from(jwtKey).decode();
+        return new SecretKeySpec(keyBytes,0,keyBytes.length,JWT_ALGORITHM.getName());
+    }
+
     public String createToken(Authentication auth){
         Instant now = Instant.now();
         Instant validity = now.plus(validTime, ChronoUnit.SECONDS);
+
+        List<String> listAuthority = new ArrayList<String>();
+        listAuthority.add("create");
+        listAuthority.add("get");
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuedAt(now)
         .expiresAt(validity)
         .subject(auth.getName())
-        .claim("jwtKey", auth)
+        .claim("users", auth)
+        .claim("permission", listAuthority)
         .build(); 
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
@@ -99,10 +119,23 @@ public class SecurityJwt {
         return null;
     }
 
-    public  Optional<String> getCurrentUserJWT(){
+    public static  Optional<String> getCurrentUserJWT(){
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(securityContext.getAuthentication())
         .filter(authentication -> authentication.getCredentials() instanceof String)
         .map(authentication -> (String) authentication.getCredentials());
     }
+
+    public Jwt checkValidRefreshToken(String token){
+        NimbusJwtDecoder jwtDecoder =NimbusJwtDecoder.withSecretKey(getSecretKey()).macAlgorithm(JWT_ALGORITHM).build();
+       
+            try {
+                 return jwtDecoder.decode(token);
+            } catch (Exception e) {
+               System.out.println("REFRESH TOKEN ERROR: " + e.getMessage());
+               throw e;
+            }
+  
+    }
+
 }

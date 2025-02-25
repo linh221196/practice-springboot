@@ -9,6 +9,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,7 @@ import com.example.springbootpractice.domain.dto.LoginDto;
 import com.example.springbootpractice.domain.dto.UsersDto;
 import com.example.springbootpractice.service.UserService;
 import com.example.springbootpractice.util.SecurityJwt;
+import com.example.springbootpractice.util.annotation.ApiMessage;
 
 import jakarta.validation.Valid;
 
@@ -67,5 +71,26 @@ public class AuthController {
         .body(usersDto);
     }
     
+    @GetMapping("/auth/account")
+    @ApiMessage("Get Auth Account")
+    public ResponseEntity<Users> getAccount(){
+        String email = SecurityJwt.getCurrentUserLogin().isPresent() ? SecurityJwt.getCurrentUserLogin().get() :"";
+        Users users = this.userService.findByEmail(email);
+        UsersDto usersDto = new UsersDto();
+        usersDto.setUsers(users);
+
+        return ResponseEntity.ok().body(users);
+    }
+
+    @GetMapping("/auth/refresh")
+    @ApiMessage("get user by refresh token")
+    public ResponseEntity<Users> getNewRefreshToken(
+        @CookieValue(name = "refreshToken") String refreshToken
+    ){
+        Jwt jwt=this.securityJwt.checkValidRefreshToken(refreshToken);
+        String email = jwt.getSubject();
+        Users users = this.userService.findByEmail(email);
+        return ResponseEntity.ok().body(users);
+    }
 }
  
