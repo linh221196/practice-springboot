@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsersDto> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<UsersDto.InnerUsersDto> login(@Valid @RequestBody LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
         Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
         Users users = this.userService.findByEmail(loginDto.getUsername());
@@ -53,6 +53,10 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(auth);
         usersDto.setUsers(users);
         usersDto.setAccessToken(accessToken);
+        UsersDto.InnerUsersDto innerUsersDto = usersDto.new InnerUsersDto();
+        innerUsersDto.setEmail(usersDto.getUsers().getEmail());;
+        innerUsersDto.setName(usersDto.getUsers().getName());
+        System.out.println("innerUsersDto "+ innerUsersDto.toString());
 
         String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), usersDto.getUsers());      
         
@@ -68,7 +72,7 @@ public class AuthController {
         .build();
         return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
-        .body(usersDto);
+        .body(innerUsersDto);
     }
     
     @GetMapping("/auth/account")

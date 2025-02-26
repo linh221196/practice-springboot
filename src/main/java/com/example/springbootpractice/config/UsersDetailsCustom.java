@@ -1,4 +1,4 @@
-package com.example.springbootpractice.service;
+package com.example.springbootpractice.config;
 
 import java.util.Collections;
 
@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.example.springbootpractice.domain.Users;
+import com.example.springbootpractice.service.UserService;
 
 @Component("userDetailsService")
 public class UsersDetailsCustom implements UserDetailsService {

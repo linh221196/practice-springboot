@@ -98,7 +98,7 @@ public class SecurityConfiguration {
        CorsConfiguration configuration = new CorsConfiguration();
        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
        configuration.setAllowedMethods(Arrays.asList("POST","GET","PATCH","PUT","DELETE","OPTIONS"));
-       configuration.setAllowedHeaders(Arrays.asList("Content-Type","Authorization","Accept"));
+       configuration.setAllowedHeaders(Arrays.asList("Content-Type","Authorization","Accept","x-no-retry"));
        configuration.setAllowCredentials(true);
        configuration.setMaxAge(3600L);
        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

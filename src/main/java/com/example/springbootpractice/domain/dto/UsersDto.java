@@ -14,4 +14,14 @@ import lombok.Setter;
 public class UsersDto {
     private String accessToken;
     private Users users;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor 
+    public class InnerUsersDto {
+        private String name;
+        private String email;
+        
+    }
 }
