@@ -84,7 +84,7 @@ public class SecurityJwt {
          Map<String, Object> userClaims = new HashMap<>();
             userClaims.put("id", users.getId());  
             userClaims.put("email", users.getEmail());
-            userClaims.put("role", users.getRoles());
+            userClaims.put("roles", users.getRoles().getId());
 
 
         JwtClaimsSet claims = JwtClaimsSet.builder()

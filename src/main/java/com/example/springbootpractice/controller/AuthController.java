@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.LoginDto;
 import com.example.springbootpractice.domain.dto.UsersDto;
+import com.example.springbootpractice.domain.dto.UsersInfoDto;
 import com.example.springbootpractice.service.UserService;
 import com.example.springbootpractice.util.SecurityJwt;
 import com.example.springbootpractice.util.annotation.ApiMessage;
@@ -42,21 +43,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsersDto> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<UsersInfoDto> login(@Valid @RequestBody LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
         Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
         Users users = this.userService.findByEmail(loginDto.getUsername());
         
         this.securityJwt.createToken(loginDto.getUsername());
-        UsersDto usersDto = new UsersDto();
+        
         String accessToken = this.securityJwt.createToken(auth.getName());
         SecurityContextHolder.getContext().setAuthentication(auth);
-        usersDto.setUsers(users);
-        usersDto.setAccessToken(accessToken);
-
-        String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), usersDto.getUsers());      
+       
+        UsersInfoDto usersInfoDto = UsersInfoDto.builder()
+        .email(users.getEmail())
+        .accessToken(accessToken)
+        .name(users.getName())
+        //.role(users.getRoles())
+        .build();
         
+        String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), users);  
         this.userService.updateUserRefreshToken(refreshToken, loginDto.getUsername());
+
+
         
         //set cookies
         ResponseCookie responseCookie = ResponseCookie
@@ -68,7 +75,7 @@ public class AuthController {
         .build();
         return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE,responseCookie.toString())
-        .body(usersDto);
+        .body(usersInfoDto);
     }
     
     @GetMapping("/auth/account")

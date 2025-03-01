@@ -1,9 +1,9 @@
 package com.example.springbootpractice.domain.dto;
 
 import com.example.springbootpractice.domain.Roles;
-import com.example.springbootpractice.domain.Users;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,9 +11,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class UsersDto {
+@AllArgsConstructor 
+@Builder
+public class UsersInfoDto {
     private String accessToken;
-    private Users users;
-
+    private String name;
+    private String email;
+    private Roles role;
+    
 }
