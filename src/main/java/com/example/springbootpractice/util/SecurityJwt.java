@@ -29,6 +29,10 @@ import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.UsersDto;
 import com.nimbusds.jose.util.Base64;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 
 @Service
 public class SecurityJwt {
@@ -80,11 +84,15 @@ public class SecurityJwt {
     public String createRefreshToken(String email, Users users){
         Instant now = Instant.now();
         Instant validity = now.plus(validTime, ChronoUnit.SECONDS);
+        ClaimRole claimRole = ClaimRole.builder()
+        .id(users.getRoles().getId())
+        .name(users.getRoles().getName())
+        .build();
 
          Map<String, Object> userClaims = new HashMap<>();
             userClaims.put("id", users.getId());  
             userClaims.put("email", users.getEmail());
-            userClaims.put("roles", users.getRoles().getId());
+            userClaims.put("roles", claimRole);
 
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -136,6 +144,15 @@ public class SecurityJwt {
                throw e;
             }
   
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class ClaimRole {
+        private long id;
+        private String name;
+   
     }
 
 }

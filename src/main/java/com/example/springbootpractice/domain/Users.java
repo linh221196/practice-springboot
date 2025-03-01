@@ -52,7 +52,7 @@ public class Users extends BaseEntity {
     private String address;
 
     @ManyToOne
-    @JoinColumn(name="roles_id")
+    @JoinColumn(name="roles")
     private Roles roles;
 
     @OneToMany(mappedBy = "users")
