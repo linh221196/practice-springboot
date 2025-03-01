@@ -57,7 +57,7 @@ public class AuthController {
         .email(users.getEmail())
         .accessToken(accessToken)
         .name(users.getName())
-        //.role(users.getRoles())
+        .role(users.getRoles())
         .build();
         
         String refreshToken = this.securityJwt.createRefreshToken(loginDto.getUsername(), users);  
