@@ -1,6 +1,7 @@
 package com.example.springbootpractice.util;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -35,6 +36,9 @@ public class FormatRestResponse implements ResponseBodyAdvice {
 
                 if(body instanceof String){
                     return body;
+                }
+                if (body instanceof Resource) {
+                    return body; // Skip wrapping for Resource
                 }
 
                 if(status >=400){

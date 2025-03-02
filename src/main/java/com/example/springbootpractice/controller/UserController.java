@@ -1,11 +1,23 @@
 package com.example.springbootpractice.controller;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.apache.catalina.security.SecurityUtil;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +30,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.PaginationDTO;
 import com.example.springbootpractice.service.UserService;
+import com.example.springbootpractice.util.SecurityJwt;
 import com.turkraft.springfilter.boot.Filter;
+
+import jakarta.transaction.Transactional;
 
 
 
@@ -87,5 +103,36 @@ public class UserController {
         tempUser.setName(user.getName());
         tempUser.setEmail(user.getEmail());
         return this.userService.handleCreatedUser(tempUser);     
+    }
+
+    @PostMapping("/upload-image")
+    public ResponseEntity<String> uploadProfileImage(@RequestParam("File") MultipartFile file) {
+        String email = SecurityJwt.getCurrentUserLogin().get();
+        long userId = this.userService.findByEmail(email).getId();
+        String filePath = this.userService.saveProfileImage(userId, file);
+        return ResponseEntity.ok(filePath);
+    }
+
+    @GetMapping(value="/profile-image",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Transactional
+    public ResponseEntity<Resource> getProfileImage() throws IOException {
+        String email = SecurityJwt.getCurrentUserLogin().get();
+        String filePath = this.userService.findByEmail(email).getImage();
+        if (filePath == null || filePath.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        String baseDir = "C:/spring-next/springbootpractice";
+        Path fileLocation = Paths.get(baseDir, filePath).toAbsolutePath();
+        Resource image = new UrlResource(fileLocation.toUri());
+        if (!image.exists() || !image.isReadable()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        String contentType = Files.probeContentType(fileLocation);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(contentType))
+            .body(image);
     }
 }

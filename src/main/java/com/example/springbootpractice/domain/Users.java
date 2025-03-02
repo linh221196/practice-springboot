@@ -43,6 +43,7 @@ public class Users extends BaseEntity {
     private String phone;
     private String name;
     private int age;
+    private String image;
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
