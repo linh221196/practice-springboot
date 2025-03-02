@@ -5,11 +5,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.example.springbootpractice.service.UserService;
+
 @Configuration
 public class PermisssonInterceptorConfiguration implements WebMvcConfigurer {
+    private final UserService userService;
+    
+    public PermisssonInterceptorConfiguration(UserService userService) {
+        this.userService = userService;
+    }
     @Bean
     PermisssonInterceptor getPermisssonInterceptor(){
-        return new PermisssonInterceptor();
+        return new PermisssonInterceptor(userService);
     }
     @Override
     public void addInterceptors(InterceptorRegistry registry){
