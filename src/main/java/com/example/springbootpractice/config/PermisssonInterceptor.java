@@ -1,7 +1,5 @@
 package com.example.springbootpractice.config;
 
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
