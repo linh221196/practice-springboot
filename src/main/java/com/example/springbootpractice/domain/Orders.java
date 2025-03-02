@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.springbootpractice.domain.entity.BaseEntity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,13 +30,9 @@ public class Orders extends BaseEntity {
     @JoinColumn
     private Users users;
 
-    @OneToMany(mappedBy = "orders")
+    @OneToMany(mappedBy = "orders", fetch = FetchType.LAZY)
     private List<Products> products;
-
-    @Override
-    public String toString() {
-        return "Order [id=" + id + ", totalPrice=" + totalPrice + "]";
-    } 
+ 
     
     
 }
