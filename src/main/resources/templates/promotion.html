@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promotion</title>
+  </head>
+  <body>
+    <table>
+      <th:block th:each="item : ${items}">
+        <tr>
+          <td>Name: <span th:text="${item.name}"></span></td>
+        </tr>
+        <tr>
+          <td>Price: <span th:text="${item.price}"></span></td>
+        </tr>
+      </th:block>
+    </table>
+  </body>
+</html>

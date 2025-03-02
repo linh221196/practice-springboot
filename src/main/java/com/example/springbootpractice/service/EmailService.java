@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -33,7 +34,7 @@ public class EmailService {
         this.javaMailSender.send(msg);
     }
 
-
+    @Async
     public void sendEmailWithTemplate(
         String to, String subject, String content, boolean isMultipart, boolean isHtml
     ){
@@ -49,6 +50,7 @@ public class EmailService {
         }
     }
 
+    @Async
     public void sendEmailWithTemplateSync(String to, String subject ,String templateName){
         Context context = new Context();
         int token = ThreadLocalRandom.current().nextInt(10000,99999);

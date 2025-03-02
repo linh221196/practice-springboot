@@ -29,6 +29,6 @@ public class EmailController {
     @ApiMessage("send one email with template")
     public void sendEmailWithTemplate(){
         
-        this.emailService.sendEmailWithTemplateSync("luu.khanh.linh.1034@gmail.com", "W/ template", "test");
+        this.emailService.sendEmailWithTemplateSync("luu.khanh.linh.1034@gmail.com", "W/ template", "verifyCode");
     }
 }
