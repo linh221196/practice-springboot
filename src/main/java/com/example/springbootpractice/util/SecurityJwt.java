@@ -26,7 +26,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 
 import com.example.springbootpractice.domain.Users;
-import com.example.springbootpractice.domain.dto.UsersDto;
 import com.nimbusds.jose.util.Base64;
 
 import lombok.Builder;

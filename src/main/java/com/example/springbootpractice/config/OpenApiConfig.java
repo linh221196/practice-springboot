@@ -22,7 +22,7 @@ public class OpenApiConfig {
                 .description("This API exposes all endpoints")
                 .termsOfService("https://your-terms.com")
                 .contact(new Contact()
-                    .name("Luu Khanh Linh(루칸린린)")
+                    .name("Luu Khanh Linh(루칸린)")
                     .url("N/A")
                     .email("luu.khanh.linh.1034@gmail.com"))
                 .license(new License()

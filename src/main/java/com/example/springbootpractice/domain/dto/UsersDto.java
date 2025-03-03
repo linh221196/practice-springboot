@@ -1,6 +1,5 @@
 package com.example.springbootpractice.domain.dto;
 
-import com.example.springbootpractice.domain.Roles;
 import com.example.springbootpractice.domain.Users;
 
 import lombok.AllArgsConstructor;

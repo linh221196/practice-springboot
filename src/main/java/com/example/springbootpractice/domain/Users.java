@@ -5,18 +5,20 @@ import java.util.List;
 
 import com.example.springbootpractice.domain.entity.BaseEntity;
 import com.example.springbootpractice.util.constantEnum.GenderEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
@@ -43,14 +45,18 @@ public class Users extends BaseEntity {
     private String phone;
     private String name;
     private int age;
-    private String image;
+
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Images image;
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
-    private String address;
+
+    @OneToMany(mappedBy = "users")
+    private List<Addresses> address;
 
     @ManyToOne
     @JoinColumn(name="roles")
@@ -59,11 +65,6 @@ public class Users extends BaseEntity {
     @OneToMany(mappedBy = "users")
     private List<Orders> orders;
 
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", email=" + email + ", password=" + password + ", phone=" + phone + ", name=" + name
-                + "]";
-    }
 
     
     

@@ -1,21 +1,17 @@
 package com.example.springbootpractice.controller;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
-import org.apache.catalina.security.SecurityUtil;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +63,7 @@ public class UserController {
     public ResponseEntity<Users> createUser(@RequestBody Users user){
         String hashPW= user.getPassword();
         String hashed =  this.passwordEncoder.encode(hashPW);
+    
         user.setPassword(hashed);
         this.userService.handleCreatedUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
@@ -117,7 +114,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<Resource> getProfileImage() throws IOException {
         String email = SecurityJwt.getCurrentUserLogin().get();
-        String filePath = this.userService.findByEmail(email).getImage();
+        String filePath = this.userService.findByEmail(email).getImage().getPath();
         if (filePath == null || filePath.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

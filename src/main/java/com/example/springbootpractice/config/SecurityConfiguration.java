@@ -53,7 +53,8 @@ public class SecurityConfiguration {
         "/swagger-ui/**",
         "/swagger-ui.html"
         ).permitAll()  // Allow access to login page
-        .anyRequest().authenticated()
+        // .anyRequest().authenticated()
+        .anyRequest().permitAll()
     )  
     .formLogin(f -> f.disable())
     .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))

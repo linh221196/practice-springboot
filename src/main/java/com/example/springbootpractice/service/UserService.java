@@ -1,10 +1,8 @@
 package com.example.springbootpractice.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,19 +10,19 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.core.io.InputStreamResource;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.springbootpractice.domain.Images;
 import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.MetaDTO;
 import com.example.springbootpractice.domain.dto.PaginationDTO;
@@ -35,10 +33,6 @@ import com.example.springbootpractice.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
 
-    public String handleUserPage(){
-        return "Hello world from UserService > UserController > /";
-    }
-
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -48,7 +42,7 @@ public class UserService {
         try {
             return this.userRepository.save(user);
         } catch (Exception e) {
-            throw new IllegalArgumentException("EMAIL IS ALREADY IN USE");
+            throw new IllegalArgumentException(e.getMessage());
         }
        
     }
@@ -120,7 +114,8 @@ public class UserService {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             Users user = this.userRepository.findById(userId).orElseThrow();
             String fileLocale ="/uploads/" + filename;
-            user.setImage(fileLocale);
+            Images images= Images.builder().path(fileLocale).build();
+            user.setImage(images);
             this.userRepository.save(user);
             return fileLocale;  // Save this in the database
         } catch (IOException e) {
@@ -130,7 +125,7 @@ public class UserService {
 
     public Resource getProfileImage(String email) {
         try {
-             String filePath = this.findByEmail(email).getImage();
+             String filePath = this.findByEmail(email).getImage().getPath();
         if (filePath == null || filePath.isEmpty()) {
             return null;
         }

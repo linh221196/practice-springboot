@@ -1,7 +1,6 @@
 package com.example.springbootpractice.service;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.mail.SimpleMailMessage;
