@@ -41,6 +41,11 @@ public class FormatRestResponse implements ResponseBodyAdvice {
                     return body; // Skip wrapping for Resource
                 }
 
+                String path = request.getURI().getPath();
+                if(path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")){
+                    return body;
+                }
+
                 if(status >=400){
                 return body;
 
