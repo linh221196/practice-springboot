@@ -21,7 +21,10 @@ public class PermisssonInterceptorConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         String[] whiteList = {
-            "/","/login","/auth/refresh"
+            "/","/login","/auth/refresh",
+            "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html"
         };
         registry.addInterceptor(getPermisssonInterceptor())
         .excludePathPatterns(whiteList);

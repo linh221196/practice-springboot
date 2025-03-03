@@ -48,7 +48,11 @@ public class SecurityConfiguration {
     .cors(Customizer.withDefaults()) 
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/","/login","/auth/refresh").permitAll()  // Allow access to login page
+        .requestMatchers("/","/login","/auth/refresh",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html"
+        ).permitAll()  // Allow access to login page
         .anyRequest().authenticated()
     )  
     .formLogin(f -> f.disable())
