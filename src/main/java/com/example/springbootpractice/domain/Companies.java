@@ -22,6 +22,9 @@ public class Companies extends BaseEntity {
     @NotBlank(message = "COMPANY'S NAME CANNOT BLANK")
     private String name;
 
+    @OneToMany(mappedBy = "companies", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Images> images;
+
     @OneToMany (mappedBy = "companies")
     private List<Products> products;
 

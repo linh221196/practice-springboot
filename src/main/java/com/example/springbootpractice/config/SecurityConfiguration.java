@@ -48,13 +48,11 @@ public class SecurityConfiguration {
     .cors(Customizer.withDefaults()) 
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/","/login","/auth/refresh",
-        "/v3/api-docs/**",
-        "/swagger-ui/**",
-        "/swagger-ui.html"
+        .requestMatchers("/","/login","/auth/refresh","/register","/auth/verify",
+        "/v3/api-docs/**","/swagger-ui/**", "/swagger-ui.html"
         ).permitAll()  // Allow access to login page
-        // .anyRequest().authenticated()
-        .anyRequest().permitAll()
+        .anyRequest().authenticated()
+        // .anyRequest().permitAll()
     )  
     .formLogin(f -> f.disable())
     .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))

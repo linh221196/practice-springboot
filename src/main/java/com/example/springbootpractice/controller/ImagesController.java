@@ -10,16 +10,16 @@ import com.example.springbootpractice.service.UserService;
 import com.example.springbootpractice.util.SecurityJwt;
 
 @RestController("/file")
-public class FileController {
+public class ImagesController {
  
     private final UserService userService;
 
-    public FileController(UserService userService) {
+    public ImagesController(UserService userService) {
         this.userService = userService;
     }
     
     @PostMapping("/upload-image")
-     public ResponseEntity<String> uploadProfileImage(@RequestParam("File") MultipartFile file) {
+     public ResponseEntity<String> uploadCompanyImages(@RequestParam("File") MultipartFile file) {
         String email = SecurityJwt.getCurrentUserLogin().get();
         long userId = this.userService.findByEmail(email).getId();
         String filePath = this.userService.saveProfileImage(userId, file);

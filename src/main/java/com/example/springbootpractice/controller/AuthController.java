@@ -3,26 +3,33 @@ package com.example.springbootpractice.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.springbootpractice.domain.Users;
 import com.example.springbootpractice.domain.dto.LoginDto;
 import com.example.springbootpractice.domain.dto.UsersDto;
 import com.example.springbootpractice.domain.dto.UsersInfoDto;
+import com.example.springbootpractice.service.AuthCodeService;
+import com.example.springbootpractice.service.EmailService;
 import com.example.springbootpractice.service.UserService;
 import com.example.springbootpractice.util.SecurityJwt;
 import com.example.springbootpractice.util.annotation.ApiMessage;
+import com.example.springbootpractice.util.constantEnum.EmailConstant;
 
 import jakarta.validation.Valid;
 
@@ -32,14 +39,47 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserService userService;
     private final SecurityJwt securityJwt;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final AuthCodeService authCodeService;
 
     @Value("${valid.refresh.jwt}")
     private long validRefreshTime;
     
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService, SecurityJwt securityJwt) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService,
+     SecurityJwt securityJwt,PasswordEncoder passwordEncoder, AuthCodeService authCodeService,
+     EmailService emailService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userService = userService;
         this.securityJwt = securityJwt;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService =emailService;
+        this.authCodeService =authCodeService;
+    }
+
+    @GetMapping("/")
+    public String hello(){
+        return "hello";
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Users> createUser(@RequestBody Users user){
+        String hashPW= user.getPassword();
+        String hashed =  this.passwordEncoder.encode(hashPW);
+    
+        user.setPassword(hashed);
+        this.userService.handleCreatedUser(user);
+        String email = user.getEmail();
+        this.emailService.sendVerifyEmailWithTemplateSync(email,EmailConstant.VERIFY_EMAIL.getSubject(), EmailConstant.VERIFY_EMAIL.getTemplate());
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        
+    }
+
+    @GetMapping("/auth/verify")
+    public String verify(@RequestParam String token){
+        String result = this.authCodeService.verifyRegister(token);  
+        return result;
     }
 
     @PostMapping("/login")

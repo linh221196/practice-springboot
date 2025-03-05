@@ -46,8 +46,10 @@ public class Users extends BaseEntity {
     private String name;
     private int age;
 
-    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Images image;
+  
+    private String image;
+    private boolean isValidated;
+    private boolean isActive; 
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;

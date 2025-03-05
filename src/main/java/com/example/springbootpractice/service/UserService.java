@@ -114,8 +114,8 @@ public class UserService {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             Users user = this.userRepository.findById(userId).orElseThrow();
             String fileLocale ="/uploads/" + filename;
-            Images images= Images.builder().path(fileLocale).build();
-            user.setImage(images);
+           
+            user.setImage(fileLocale);
             this.userRepository.save(user);
             return fileLocale;  // Save this in the database
         } catch (IOException e) {
@@ -125,7 +125,7 @@ public class UserService {
 
     public Resource getProfileImage(String email) {
         try {
-             String filePath = this.findByEmail(email).getImage().getPath();
+             String filePath = this.findByEmail(email).getImage();
         if (filePath == null || filePath.isEmpty()) {
             return null;
         }
